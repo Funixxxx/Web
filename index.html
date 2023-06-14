@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ChatGPT Website</title>
+    <style>
+        #chat-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+        #messages {
+            height: 300px;
+            overflow-y: scroll;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #input-container {
+            margin-top: 10px;
+        }
+        #user-input {
+            width: 100%;
+            padding: 5px;
+            font-size: 16px;
+        }
+        #send-button {
+            margin-top: 5px;
+            padding: 5px 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="messages"></div>
+        <div id="input-container">
+            <input type="text" id="user-input" placeholder="Masukkan pesan...">
+            <button id="send-button" onclick="sendMessage()">Kirim</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        const messagesDiv = document.getElementById('messages');
+        const userInput = document.getElementById('user-input');
+
+        async function sendMessage() {
+            const message = userInput.value;
+            userInput.value = '';
+
+            displayMessage('user', message);
+
+            const response = await getChatbotResponse(message);
+            displayMessage('chatbot', response);
+        }
+
+        function displayMessage(sender, text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.classList.add(sender);
+            messageDiv.innerText = text;
+
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        async function getChatbotResponse(message) {
+            try {
+                const response = await axios.post('/api/chat', { message });
+                return response.data.reply;
+            } catch (error) {
+                console.error(error);
+                return 'Maaf, ada kesalahan dalam memproses permintaan Anda.';
+            }
+        }
+    </script>
+</body>
+</html>
